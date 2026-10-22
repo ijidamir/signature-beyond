@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image"
 import Link from "next/link";
 import { getPublishedArtworks } from "@/lib/services";
 import { filterArtworks, filterOptions, pageHref, paginate, parseQuery } from "@/lib/artwork-filters";
@@ -23,14 +24,22 @@ export default async function ArtworksPage({
 
   return (
     <>
-      <section className="bg-gradient-to-br from-stone-900 to-ink py-14 text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <h1 className="font-serif text-5xl">Artworks</h1>
-          <p className="mt-3 max-w-md text-sm text-white/80">
-            Discover exceptional works from leading and emerging African artists.
-          </p>
-        </div>
-      </section>
+      <section className="relative py-14 text-white overflow-hidden">
+  <Image
+    src="/images/background-1.jpeg"
+    alt="Artworks background"
+    fill
+    className="object-cover"
+  />
+  <div className="absolute inset-0 bg-black/60" />
+  
+  <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
+    <h1 className="font-serif text-5xl">Artworks</h1>
+    <p className="mt-3 max-w-md text-sm text-white/80">
+      Discover exceptional works from leading and emerging African artists.
+    </p>
+  </div>
+</section>
 
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[220px_1fr]">
         <aside aria-label="Filter artworks">
