@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/admin/auth";
 import { getResource } from "@/lib/admin/resources";
 import { createClient } from "@/lib/supabase/server";
+import { headers } from "next/headers";
+import { SITE_URL } from "@/lib/site";
 import { isDemoMode } from "@/lib/services";
 
 export interface FormState { ok: boolean; message: string }
@@ -198,4 +200,43 @@ export async function logout(): Promise<void> {
   const db = await createClient();
   await db.auth.signOut();
   redirect("/admin/login");
+}
+
+export async function requestPasswordReset(_prev: FormState, form: FormData): Promise<FormState> {
+  if (isDemoMode) return fail("Demo mode: connect Supabase to enable password reset.");
+  const email = String(form.get("email") ?? "").trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail("Please enter a valid email address.");
+  const origin = (await headers()).get("origin") ?? SITE_URL;
+  const db = await createClient();
+  const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo: `${origin}/admin/auth/callback` });
+  if (error) return fail(`Could not send the email: ${error.message}`);
+  // Same message whether or not the email has an account, so nobody can probe for accounts.
+  return { ok: true, message: "If that email belongs to an account, a reset link has been sent. Check your inbox and spam folder." };
+}
+
+export async function updatePassword(_prev: { error: string }, form: FormData): Promise<{ error: string }> {
+  const password = String(form.get("password") ?? "");
+  if (password.length < 8) return { error: "Password must be at least 8 characters." };
+  if (password !== String(form.get("confirm") ?? "")) return { error: "The two passwords do not match." };
+  const db = await createClient();
+  const { data: { user } } = await db.auth.getUser();
+  if (!user) return { error: "This reset link has expired. Please request a new one." };
+  const { error } = await db.auth.updateUser({ password });
+  if (error) return { error: error.message };
+  await db.auth.signOut();
+  redirect("/admin/login?reset=1");
+}
+
+export async function markEnquiryRead(id: string): Promise<void> {
+  const { db } = await requireAdmin();
+  const { error } = await db.from("enquiries").update({ handled: true }).eq("id", id);
+  if (error) throw new Error(`Could not update the notification: ${error.message}`);
+  revalidatePath("/admin", "layout");
+}
+
+export async function markAllEnquiriesRead(): Promise<void> {
+  const { db } = await requireAdmin();
+  const { error } = await db.from("enquiries").update({ handled: true }).eq("handled", false);
+  if (error) throw new Error(`Could not update notifications: ${error.message}`);
+  revalidatePath("/admin", "layout");
 }
