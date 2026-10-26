@@ -19,10 +19,10 @@ function SectionHead(props: { eyebrow: string; title: string; href: string; link
   return (
     <div className="mb-6 flex items-end justify-between gap-4">
       <div>
-        <p className="text-xs uppercase tracking-[0.2em] text-stone-500">{props.eyebrow}</p>
+        <p className="text-xs pl-1 mb-1 uppercase tracking-[0.2em] text-stone-500">{props.eyebrow}</p>
         <h2 className="font-serif text-3xl">{props.title}</h2>
       </div>
-      <Link href={props.href} className="shrink-0 text-xs underline-offset-4 hover:underline">
+      <Link href={props.href} className="shrink-0 text-xs underline-offset-4 hover:underline pb-2">
         {props.linkLabel} →
       </Link>
     </div>
@@ -83,7 +83,7 @@ export default async function HomePage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 ">
           {tiles.map((t, i) => (
             <li key={t.title}>
               <Reveal delay={i * 0.05}>
@@ -120,7 +120,7 @@ export default async function HomePage() {
                 <li key={a.id}>
                   <Link href={`/auctions/${a.slug}`} className="group block">
                     <div className="overflow-hidden"><CoverImage url={a.coverImageUrl} className={hover} /></div>
-                    <p className="mt-2 text-sm font-medium">{a.title}</p>
+                    <p className="mt-2 mb-1 text-xl font-medium">{a.title}</p>
                     <p className="text-xs text-stone-500">{formatDateRange(a.startDate, a.endDate)}</p>
                   </Link>
                 </li>
@@ -138,7 +138,7 @@ export default async function HomePage() {
                 <li key={e.id}>
                   <Link href={`/exhibitions/${e.slug}`} className="group block">
                     <div className="overflow-hidden"><CoverImage url={e.coverImageUrl} className={hover} /></div>
-                    <p className="mt-2 text-sm font-medium">{e.title}</p>
+                    <p className="mt-2 mb-1 text-xl font-medium">{e.title}</p>
                     <p className="text-xs text-stone-500">{e.year ?? "Date to be confirmed"}</p>
                   </Link>
                 </li>
