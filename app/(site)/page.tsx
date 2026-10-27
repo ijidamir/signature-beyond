@@ -120,7 +120,7 @@ export default async function HomePage() {
                 <li key={a.id}>
                   <Link href={`/auctions/${a.slug}`} className="group block">
                     <div className="overflow-hidden"><CoverImage url={a.coverImageUrl} className={hover} /></div>
-                    <p className="mt-2 mb-1 text-xl font-medium">{a.title}</p>
+                    <p className="mt-2 mb-1 text-sm font-medium">{a.title}</p>
                     <p className="text-xs text-stone-500">{formatDateRange(a.startDate, a.endDate)}</p>
                   </Link>
                 </li>
@@ -138,7 +138,7 @@ export default async function HomePage() {
                 <li key={e.id}>
                   <Link href={`/exhibitions/${e.slug}`} className="group block">
                     <div className="overflow-hidden"><CoverImage url={e.coverImageUrl} className={hover} /></div>
-                    <p className="mt-2 mb-1 text-xl font-medium">{e.title}</p>
+                    <p className="mt-2 mb-1 text-sm font-medium">{e.title}</p>
                     <p className="text-xs text-stone-500">{e.year ?? "Date to be confirmed"}</p>
                   </Link>
                 </li>
