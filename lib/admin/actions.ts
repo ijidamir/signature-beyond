@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { headers } from "next/headers";
 import { SITE_URL } from "@/lib/site";
 import { isDemoMode } from "@/lib/services";
+import { LEGAL_DEFAULTS, isLegalKey } from "@/lib/content/legal";
 
 export interface FormState { ok: boolean; message: string }
 const fail = (message: string): FormState => ({ ok: false, message });
@@ -49,6 +50,7 @@ export async function saveRecord(_prev: FormState, form: FormData): Promise<Form
     }
     const raw = String(form.get(f.name) ?? "").trim();
     if (f.required && !raw) return fail(`${f.label} is required.`);
+    if (raw && f.pattern && !new RegExp(f.pattern).test(raw)) return fail(f.patternMessage ?? `${f.label} is not in the right format.`);
     if (f.type === "number") {
       const n = Number(raw);
       if (raw && !Number.isFinite(n)) return fail(`${f.label} must be a number.`);
@@ -239,4 +241,39 @@ export async function markAllEnquiriesRead(): Promise<void> {
   const { error } = await db.from("enquiries").update({ handled: true }).eq("handled", false);
   if (error) throw new Error(`Could not update notifications: ${error.message}`);
   revalidatePath("/admin", "layout");
+}
+
+export async function saveLegalPage(_prev: FormState, form: FormData): Promise<FormState> {
+  if (isDemoMode) return fail("Demo mode: nothing can be saved. Connect Supabase first.");
+  const { db } = await requireAdmin();
+  const key = String(form.get("_key") ?? "");
+  if (!isLegalKey(key)) return fail("Unknown page.");
+
+  const title = String(form.get("title") ?? "").trim();
+  const content = String(form.get("content") ?? "").replace(/\r\n?/g, "\n").trim();
+  const date = String(form.get("last_updated") ?? "").trim();
+  if (!title) return fail("Title is required.");
+  if (!content) return fail("The page text cannot be empty. To go back to the original wording, use \"Restore original wording\".");
+  if (content.length > 60000) return fail("The page text is too long (limit 60,000 characters).");
+  if (date && !/^\d{4}-\d{2}-\d{2}$/.test(date)) return fail("Last updated must be a valid date.");
+
+  // "upsert" = update the page if it exists, create it if it does not. Either way the page ends up saved.
+  const { error } = await db.from("legal_pages").upsert({
+    page_key: key, title, content, last_updated: date || null,
+    show_draft_notice: form.get("show_draft_notice") === "on", updated_at: new Date().toISOString(),
+  }, { onConflict: "page_key" });
+  if (error) return fail(`Could not save: ${error.message}`);
+  refresh();
+  return { ok: true, message: "Saved. The live page now shows this text." };
+}
+
+/** Removes the saved version, so the page goes back to the wording built into the website. */
+export async function restoreLegalPage(form: FormData): Promise<void> {
+  const { db } = await requireAdmin();
+  const key = String(form.get("_key") ?? "");
+  if (!isLegalKey(key) || !LEGAL_DEFAULTS[key]) throw new Error("Unknown page.");
+  const { error } = await db.from("legal_pages").delete().eq("page_key", key);
+  if (error) throw new Error(`Could not restore: ${error.message}`);
+  refresh();
+  redirect(`/admin/legal/${key}`);
 }

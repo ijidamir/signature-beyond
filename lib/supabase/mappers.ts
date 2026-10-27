@@ -1,6 +1,6 @@
-import type { Artist, Artwork, Auction, Exhibition, JournalPost, Testimonial, WebsiteSettings } from "@/types";
+import type { Artist, Artwork, Auction, Exhibition, FaqRecord, JournalPost, LegalPageRecord, Testimonial, WebsiteSettings } from "@/types";
 import type {
-  ArtistRow, ArtworkRow, AuctionRow, ExhibitionRow, JournalRow, SettingsRow, TestimonialRow,
+  ArtistRow, ArtworkRow, AuctionRow, ExhibitionRow, FaqRow, JournalRow, LegalRow, SettingsRow, TestimonialRow,
 } from "./rows";
 import { mediaUrl } from "./env";
 
@@ -48,8 +48,7 @@ export const toSettings = (r: SettingsRow): WebsiteSettings => ({
   homeIntro: r.home_intro, aboutSummary: r.about_summary, whatsappNumber: r.whatsapp_number,
   whatsappDefaultMessage: r.whatsapp_default_message, whatsappArtworkTemplate: r.whatsapp_artwork_template,
   primaryEmail: r.primary_email, additionalEmails: r.additional_emails, phoneNumbers: r.phone_numbers,
-  address: r.address, virtualTourUrl: r.virtual_tour_url, heroImageUrl: mediaUrl(r.hero_image_path) ?? "",
-  logoUrl: mediaUrl(r.logo_path) ?? "",
+  address: r.address, virtualTourUrl: r.virtual_tour_url, heroImageUrl: mediaUrl(r.hero_image_path) ?? "", logoUrl: mediaUrl(r.logo_path) ?? "",
   tileImages: {
     auctions: mediaUrl(r.tile_auctions_path) ?? "", exhibitions: mediaUrl(r.tile_exhibitions_path) ?? "",
     artworks: mediaUrl(r.tile_artworks_path) ?? "", tour: mediaUrl(r.tile_tour_path) ?? "",
@@ -58,4 +57,13 @@ export const toSettings = (r: SettingsRow): WebsiteSettings => ({
     instagram: r.social.instagram ?? "", facebook: r.social.facebook ?? "", youtube: r.social.youtube ?? "",
     tiktok: r.social.tiktok ?? "", linkedin: r.social.linkedin ?? "",
   },
+});
+
+export const toFaq = (r: FaqRow): FaqRecord => ({
+  id: r.id, category: r.category, question: r.question, answer: r.answer,
+  linkLabel: r.link_label, linkHref: r.link_href, sortOrder: r.sort_order,
+});
+
+export const toLegalPage = (r: LegalRow): LegalPageRecord => ({
+  key: r.page_key, title: r.title, content: r.content, lastUpdated: r.last_updated, showDraftNotice: r.show_draft_notice,
 });

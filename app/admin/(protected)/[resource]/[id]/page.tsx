@@ -13,7 +13,7 @@ export default async function EditRecord({ params }: { params: Promise<{ resourc
   const { db } = await requireAdmin();
   const isNew = id === "new";
 
-  let values: Record<string, unknown> = { status: "draft", availability: "on_request", price_on_request: true };
+  let values: Record<string, unknown> = { status: "draft", availability: "on_request", price_on_request: true, ...res.defaults };
   if (!isNew) {
     const { data, error } = await db.from(res.table).select("*").eq("id", id).maybeSingle();
     if (error) throw new Error(`Could not load: ${error.message}`);

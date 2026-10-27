@@ -21,3 +21,5 @@ export const getExhibitionBySlug = (slug: string) => provider.getExhibitionBySlu
 export const getPublishedJournalPosts = () => provider.getPublishedJournalPosts();
 export const getJournalPostBySlug = (slug: string) => provider.getJournalPostBySlug(slug);
 export const getPublishedTestimonials = () => provider.getPublishedTestimonials();
+export const getPublishedFaqs = () => provider.getPublishedFaqs();
+export const getLegalPage = (key: string) => provider.getLegalPage(key);

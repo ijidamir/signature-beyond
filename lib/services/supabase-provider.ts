@@ -1,10 +1,10 @@
 import type { DataProvider } from "./types";
 import { createClient } from "@/lib/supabase/server";
 import type {
-  ArtworkRow, AuctionRow, ExhibitionRow, JournalRow, SettingsRow, TestimonialRow,
+  ArtworkRow, AuctionRow, ExhibitionRow, FaqRow, JournalRow, LegalRow, SettingsRow, TestimonialRow,
 } from "@/lib/supabase/rows";
 import {
-  toArtwork, toAuction, toExhibition, toJournalPost, toSettings, toTestimonial,
+  toArtwork, toAuction, toExhibition, toFaq, toJournalPost, toLegalPage, toSettings, toTestimonial,
 } from "@/lib/supabase/mappers";
 
 // Errors are thrown (never swallowed), so a failed request shows the error page
@@ -102,5 +102,20 @@ export const supabaseProvider: DataProvider = {
     const { data, error } = await db.from("testimonials").select("*").eq("status", "published");
     if (error) fail("testimonials", error.message);
     return ((data ?? []) as unknown as TestimonialRow[]).map(toTestimonial);
+  },
+
+  async getPublishedFaqs() {
+    const db = await createClient();
+    const { data, error } = await db.from("faq_items").select("*")
+      .eq("status", "published").order("sort_order", { ascending: true }).order("created_at", { ascending: true });
+    if (error) fail("the FAQ", error.message);
+    return ((data ?? []) as unknown as FaqRow[]).map(toFaq);
+  },
+
+  async getLegalPage(key) {
+    const db = await createClient();
+    const { data, error } = await db.from("legal_pages").select("*").eq("page_key", key).maybeSingle();
+    if (error) fail("the page", error.message);
+    return data ? toLegalPage(data as unknown as LegalRow) : null;
   },
 };

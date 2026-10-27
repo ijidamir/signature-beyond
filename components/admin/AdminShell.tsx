@@ -14,6 +14,8 @@ const NAV: { href: string; label: string; icon: IconName }[] = [
   { href: "/admin/exhibitions", label: "Exhibitions", icon: "exhibitions" },
   { href: "/admin/journal", label: "Journal", icon: "journal" },
   { href: "/admin/testimonials", label: "Testimonials", icon: "testimonials" },
+  { href: "/admin/faqs", label: "FAQs", icon: "faq" },
+  { href: "/admin/legal", label: "Legal pages", icon: "legal" },
   { href: "/admin/enquiries", label: "Enquiries", icon: "enquiries" },
   { href: "/admin/settings", label: "Website settings", icon: "settings" },
 ];

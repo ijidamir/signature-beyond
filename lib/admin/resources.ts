@@ -1,13 +1,21 @@
+import { FAQ_CATEGORIES } from "@/lib/content/faq";
+
 export type FieldType = "text" | "textarea" | "number" | "date" | "checkbox" | "select" | "image";
 export interface Option { value: string; label: string }
 export interface FieldDef {
   name: string; label: string; type: FieldType; required?: boolean; notNull?: boolean;
   options?: Option[]; refTable?: string; refLabel?: string; help?: string; rows?: number;
+  /** Optional check for text fields: a regular expression the value must match, and the message if it does not. */
+  pattern?: string; patternMessage?: string;
 }
 export interface LinkDef { table: string; parentCol: string; childCol: string; refTable: string; refLabel: string; label: string }
 export interface ResourceDef {
   key: string; label: string; singular: string; table: string; titleField: string; hasSlug: boolean;
   hasStatus: boolean; fields: FieldDef[]; links?: LinkDef[]; gallery?: boolean; listColumns: { name: string; label: string }[];
+  /** How the list is ordered when nobody has clicked a column heading. Default: newest first. */
+  defaultSort?: { col: string; asc: boolean };
+  /** Starting values for the "Add" form. */
+  defaults?: Record<string, unknown>;
 }
 
 const STATUS: FieldDef = {
@@ -81,5 +89,22 @@ export const RESOURCES: ResourceDef[] = [
     ],
   },
 ];
+
+// FAQ questions are managed with the same generic screens as everything else.
+RESOURCES.push({
+  key: "faqs", label: "FAQs", singular: "question", table: "faq_items", titleField: "question", hasSlug: false, hasStatus: true,
+  listColumns: [{ name: "category", label: "Category" }, { name: "sort_order", label: "Order" }],
+  defaultSort: { col: "sort_order", asc: true },
+  defaults: { status: "draft", category: "general", sort_order: 1000 },
+  fields: [
+    { name: "question", label: "Question", type: "text", required: true },
+    { name: "answer", label: "Answer", type: "textarea", required: true, rows: 8, help: "Plain text. Leave a blank line between paragraphs." },
+    { name: "category", label: "Category", type: "select", required: true, options: FAQ_CATEGORIES.map((c) => ({ value: c.id, label: c.title })) },
+    { name: "sort_order", label: "Order on the page", type: "number", required: true, help: "Lower numbers appear first. Tip: use 10, 20, 30... so you can slot a new question in between." },
+    { name: "link_label", label: "Link text (optional)", type: "text", help: "For example: Browse artworks" },
+    { name: "link_href", label: "Link address (optional)", type: "text", pattern: "^(\\/(?!\\/)|https:\\/\\/)", patternMessage: "The link address must start with / (a page on this site, like /contact) or https://", help: "A page on this site such as /contact or /artworks, or a full https:// address." },
+    STATUS,
+  ],
+});
 
 export const getResource = (key: string) => RESOURCES.find((r) => r.key === key);

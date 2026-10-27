@@ -112,8 +112,29 @@ export interface WebsiteSettings {
   virtualTourUrl: string;
   /** Homepage hero photo from Storage. Empty = use the default image in /public/images/hero.jpg */
   heroImageUrl: string;
-  /** Photos for the four homepage tiles. Empty = a placeholder box is shown. */
+  /** Logo from Storage. Empty = use the default logo in /public/images/logo.png */
   logoUrl: string;
+  /** Photos for the four homepage tiles. Empty = a placeholder box is shown. */
   tileImages: { auctions: string; exhibitions: string; artworks: string; tour: string };
   social: SocialLinks;
+}
+
+/** One FAQ question, as saved in Admin > FAQs. */
+export interface FaqRecord {
+  id: string;
+  category: string;
+  question: string;
+  answer: string;
+  linkLabel: string | null;
+  linkHref: string | null;
+  sortOrder: number;
+}
+
+/** A legal page (Privacy Policy, Terms, Auction Terms), as saved in Admin > Legal pages. */
+export interface LegalPageRecord {
+  key: string;
+  title: string;
+  content: string;
+  lastUpdated: string | null; // YYYY-MM-DD
+  showDraftNotice: boolean;
 }

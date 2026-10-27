@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FAQ } from "@/lib/content/faq";
+import { getFaqCategories } from "@/lib/content/site-content";
 import { PageBanner } from "@/components/ui/PageBanner";
 
 export const metadata: Metadata = {
@@ -8,7 +8,8 @@ export const metadata: Metadata = {
   description: "Answers to common questions about Signature Beyond, its artworks, auctions, exhibitions and how to get in touch.",
 };
 
-export default function FaqPage() {
+export default async function FaqPage() {
+  const FAQ = await getFaqCategories();
   return (
     <>
       <PageBanner title="Frequently Asked Questions" subtitle="Answers to common questions about the gallery and this website." />
@@ -25,14 +26,14 @@ export default function FaqPage() {
           <section key={c.id} id={c.id} aria-labelledby={`${c.id}-title`} className="mb-12 scroll-mt-24">
             <h2 id={`${c.id}-title`} className="mb-2 font-serif text-3xl">{c.title}</h2>
             <div className="border-t border-stone-200">
-              {c.items.map((item) => (
-                <details key={item.q} className="group border-b border-stone-200">
+              {c.items.map((item, idx) => (
+                <details key={`${c.id}-${idx}`} className="group border-b border-stone-200">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-left text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink [&::-webkit-details-marker]:hidden">
                     <span>{item.q}</span>
                     <span aria-hidden="true" className="text-xl leading-none transition-transform group-open:rotate-45">+</span>
                   </summary>
                   <div className="pb-5 text-sm leading-relaxed text-stone-700">
-                    <p>{item.a}</p>
+                    {item.a.split(/\n\s*\n/).map((para, i) => <p key={i} className={i ? "mt-3" : undefined}>{para}</p>)}
                     {item.link && (
                       <p className="mt-3"><Link href={item.link.href} className="underline underline-offset-4">{item.link.label} →</Link></p>
                     )}

@@ -30,3 +30,10 @@ export interface SettingsRow {
   phone_numbers: string[]; address: string; virtual_tour_url: string; hero_image_path: string | null; logo_path: string | null;
   tile_auctions_path: string | null; tile_exhibitions_path: string | null; tile_artworks_path: string | null; tile_tour_path: string | null; social: Partial<Record<string, string>>;
 }
+export interface FaqRow {
+  id: string; category: string; question: string; answer: string; link_label: string | null;
+  link_href: string | null; sort_order: number; status: PublishStatus;
+}
+export interface LegalRow {
+  id: string; page_key: string; title: string; content: string; last_updated: string | null; show_draft_notice: boolean;
+}

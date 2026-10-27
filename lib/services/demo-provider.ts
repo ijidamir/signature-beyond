@@ -15,4 +15,7 @@ export const demoProvider: DataProvider = {
   async getPublishedJournalPosts() { return demoJournal.filter((p) => p.status === "published"); },
   async getJournalPostBySlug(slug) { return demoJournal.find((p) => p.slug === slug && p.status === "published") ?? null; },
   async getPublishedTestimonials() { return demoTestimonials.filter((t) => t.status === "published"); },
+  // Demo mode has no database, so the built-in FAQ and legal wording is used.
+  async getPublishedFaqs() { return []; },
+  async getLegalPage() { return null; },
 };

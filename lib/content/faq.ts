@@ -1,4 +1,5 @@
-// Static FAQ content. Draft answers only: nothing here promises a service the gallery has not confirmed.
+// Built-in FAQ wording. It is shown only if no FAQ question is published in the database (Admin > FAQs).
+// Normal edits are made in the admin area, not here. Draft answers only: nothing here promises a service the gallery has not confirmed.
 export interface FaqItem { q: string; a: string; link?: { href: string; label: string } }
 export interface FaqCategory { id: string; title: string; items: FaqItem[] }
 
@@ -53,3 +54,6 @@ export const FAQ: FaqCategory[] = [
     ],
   },
 ];
+
+/** The fixed list of FAQ categories, in display order. Used by the admin dropdown and the public page. */
+export const FAQ_CATEGORIES: { id: string; title: string }[] = FAQ.map(({ id, title }) => ({ id, title }));

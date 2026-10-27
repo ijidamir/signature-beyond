@@ -43,7 +43,7 @@ export function Footer({ settings }: { settings: WebsiteSettings }) {
         <nav aria-label="Help and contact">
           <h2 className={heading}>Help &amp; Contact</h2>
           <ul className="space-y-2 text-sm">
-            <li><Link href="/faq" className={link}>FAQ</Link></li>
+            <li><Link href="/faq" className={link}>FAQs</Link></li>
             <li><Link href="/contact" className={link}>Contact Us</Link></li>
             {settings.primaryEmail && <li><a href={`mailto:${settings.primaryEmail}`} className={`break-all ${link}`}>{settings.primaryEmail}</a></li>}
             {settings.phoneNumbers.map((p) => <li key={p}><a href={`tel:${p.replace(/\s/g, "")}`} className={link}>{p}</a></li>)}
